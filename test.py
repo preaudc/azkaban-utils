@@ -41,7 +41,31 @@ def main():
 #    response = azkaban.utils.create_project(azkaban_hostname, azkaban_port, session_id, 'toto')
 #    print(response)
 
-    response = azkaban.utils.delete_project(azkaban_hostname, azkaban_port, session_id, 'toto')
+#    response = azkaban.utils.delete_project(azkaban_hostname, azkaban_port, session_id, 'toto')
+#    print(response)
+
+#    project_flows = azkaban.utils.fetch_project_flows(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+#    print(project_flows)
+#
+#    for flow in project_flows['flows']:
+#        response = azkaban.utils.fetch_schedule(azkaban_hostname, azkaban_port, session_id, flow['flowId'], project_flows['projectId'])
+#        print(response)
+
+    project_id = azkaban.utils.get_project_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+
+    flows_id = azkaban.utils.get_flows_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+
+    for flow_id in flows_id:
+        schedule_id = azkaban.utils.get_flow_schedule_id(azkaban_hostname, azkaban_port, session_id, flow_id, project_id)
+        print(f'{flow_id}: {schedule_id}')
+
+        if schedule_id is not None:
+            response = azkaban.utils.unschedule_flow(azkaban_hostname, azkaban_port, session_id, schedule_id)
+            print(response)
+
+    response = azkaban.utils.schedule_cron_flow(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10', 'flow10_country_param_it', '50 1 ? * *')
     print(response)
+
+    azkaban.utils.upload_project(azkaban_hostname, azkaban_port, session_id, 'toto', '/home/preaudc/data-platform/test-azkaban/conditionalFlowProject.zip')
 
 main()
