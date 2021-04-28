@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import azkaban.utils
+import azkaban.api
 import json
 import sys
 from urllib.error import URLError
@@ -30,7 +30,7 @@ def main():
     azkaban_password = "test"
 
     session_id=""
-    response = azkaban.utils.authenticate(azkaban_hostname, azkaban_port, azkaban_username, azkaban_password)
+    response = azkaban.api.authenticate(azkaban_hostname, azkaban_port, azkaban_username, azkaban_password)
     if 'status' in response and response['status'] == 'success':
         session_id = response['session.id']
     else:
@@ -38,34 +38,34 @@ def main():
 
     print(f'session_id: {session_id}')
 
-#    response = azkaban.utils.create_project(azkaban_hostname, azkaban_port, session_id, 'toto')
+#    response = azkaban.api.create_project(azkaban_hostname, azkaban_port, session_id, 'toto')
 #    print(response)
 
-#    response = azkaban.utils.delete_project(azkaban_hostname, azkaban_port, session_id, 'toto')
+#    response = azkaban.api.delete_project(azkaban_hostname, azkaban_port, session_id, 'toto')
 #    print(response)
 
-#    project_flows = azkaban.utils.fetch_project_flows(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+#    project_flows = azkaban.api.fetch_project_flows(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
 #    print(project_flows)
 #
 #    for flow in project_flows['flows']:
-#        response = azkaban.utils.fetch_schedule(azkaban_hostname, azkaban_port, session_id, flow['flowId'], project_flows['projectId'])
+#        response = azkaban.api.fetch_schedule(azkaban_hostname, azkaban_port, session_id, flow['flowId'], project_flows['projectId'])
 #        print(response)
 
-    project_id = azkaban.utils.get_project_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+    project_id = azkaban.api.get_project_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
 
-    flows_id = azkaban.utils.get_flows_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+    flows_id = azkaban.api.get_flows_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
 
     for flow_id in flows_id:
-        schedule_id = azkaban.utils.get_flow_schedule_id(azkaban_hostname, azkaban_port, session_id, flow_id, project_id)
+        schedule_id = azkaban.api.get_flow_schedule_id(azkaban_hostname, azkaban_port, session_id, flow_id, project_id)
         print(f'{flow_id}: {schedule_id}')
 
         if schedule_id is not None:
-            response = azkaban.utils.unschedule_flow(azkaban_hostname, azkaban_port, session_id, schedule_id)
+            response = azkaban.api.unschedule_flow(azkaban_hostname, azkaban_port, session_id, schedule_id)
             print(response)
 
-    response = azkaban.utils.schedule_cron_flow(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10', 'flow10_country_param_it', '50 1 ? * *')
+    response = azkaban.api.schedule_cron_flow(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10', 'flow10_country_param_it', '50 1 ? * *')
     print(response)
 
-    azkaban.utils.upload_project(azkaban_hostname, azkaban_port, session_id, 'toto', '/home/preaudc/data-platform/test-azkaban/conditionalFlowProject.zip')
+    azkaban.api.upload_project(azkaban_hostname, azkaban_port, session_id, 'toto', '/home/preaudc/data-platform/test-azkaban/conditionalFlowProject.zip')
 
 main()
