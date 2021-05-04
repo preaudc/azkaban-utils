@@ -1,6 +1,5 @@
 import json
 import requests
-from pprint import pprint
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -106,7 +105,7 @@ def upload_project(server_host, server_port, session_id, project_name, zip_file)
         'project':project_name
     }
     r = requests.post(azkaban_url, files=files, data=parameters)
-    pprint(r.text)
+    print(r.text)
 
 #    file_data = open(zip_file, 'rb')
 #    parameters = urlencode({

@@ -24,10 +24,10 @@ def get_active_nn(nn_list):
     sys.exit('ERROR: all NameNodes are DOWN!')
 
 def main():
-    azkaban_hostname = "dc1-kdp-dev-test-01.dev.dc1.kelkoo.net"
+    azkaban_hostname = "localhost"
     azkaban_port = "8081"
-    azkaban_username = "test"
-    azkaban_password = "test"
+    azkaban_username = "azkaban"
+    azkaban_password = "azkaban"
 
     session_id=""
     response = azkaban.api.authenticate(azkaban_hostname, azkaban_port, azkaban_username, azkaban_password)
@@ -38,8 +38,8 @@ def main():
 
     print(f'session_id: {session_id}')
 
-#    response = azkaban.api.create_project(azkaban_hostname, azkaban_port, session_id, 'toto')
-#    print(response)
+    response = azkaban.api.create_project(azkaban_hostname, azkaban_port, session_id, 'toto')
+    print(response)
 
 #    response = azkaban.api.delete_project(azkaban_hostname, azkaban_port, session_id, 'toto')
 #    print(response)
@@ -50,22 +50,22 @@ def main():
 #    for flow in project_flows['flows']:
 #        response = azkaban.api.fetch_schedule(azkaban_hostname, azkaban_port, session_id, flow['flowId'], project_flows['projectId'])
 #        print(response)
+#
+#    project_id = azkaban.api.get_project_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+#
+#    flows_id = azkaban.api.get_flows_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
+#
+#    for flow_id in flows_id:
+#        schedule_id = azkaban.api.get_flow_schedule_id(azkaban_hostname, azkaban_port, session_id, flow_id, project_id)
+#        print(f'{flow_id}: {schedule_id}')
+#
+#        if schedule_id is not None:
+#            response = azkaban.api.unschedule_flow(azkaban_hostname, azkaban_port, session_id, schedule_id)
+#            print(response)
+#
+#    response = azkaban.api.schedule_cron_flow(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10', 'flow10_country_param_it', '50 1 ? * *')
+#    print(response)
 
-    project_id = azkaban.api.get_project_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
-
-    flows_id = azkaban.api.get_flows_id(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10')
-
-    for flow_id in flows_id:
-        schedule_id = azkaban.api.get_flow_schedule_id(azkaban_hostname, azkaban_port, session_id, flow_id, project_id)
-        print(f'{flow_id}: {schedule_id}')
-
-        if schedule_id is not None:
-            response = azkaban.api.unschedule_flow(azkaban_hostname, azkaban_port, session_id, schedule_id)
-            print(response)
-
-    response = azkaban.api.schedule_cron_flow(azkaban_hostname, azkaban_port, session_id, 'project_api_flow_10', 'flow10_country_param_it', '50 1 ? * *')
-    print(response)
-
-    azkaban.api.upload_project(azkaban_hostname, azkaban_port, session_id, 'toto', '/home/preaudc/data-platform/test-azkaban/conditionalFlowProject.zip')
+    azkaban.api.upload_project(azkaban_hostname, azkaban_port, session_id, 'toto', '/home/cpreaud/dev/git/azkaban-utils/basicFlow20Project.zip')
 
 main()
