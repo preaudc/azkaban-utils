@@ -1,6 +1,7 @@
 import json
 import requests
-from pprint import pprint
+from os.path import basename
+from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -25,7 +26,11 @@ def create_project(server_host, server_port, session_id, project_name):
     parameters = parameters.encode('ascii')
     azkaban_url = f'http://{server_host}:{server_port}/manager'
     with urlopen(azkaban_url, parameters) as fp:
-        return json.loads(fp.read())
+        response = json.loads(fp.read())
+        if 'status' in response and response['status'] == 'success':
+            return(response)
+        else:
+            raise URLError(response['message'])
 
 def delete_project(server_host, server_port, session_id, project_name):
     parameters = urlencode({
@@ -82,7 +87,11 @@ def schedule_cron_flow(server_host, server_port, session_id, project_name, flow_
     parameters = parameters.encode('ascii')
     azkaban_url = f'http://{server_host}:{server_port}/schedule'
     with urlopen(azkaban_url, parameters) as fp:
-        return json.loads(fp.read())
+        response = json.loads(fp.read())
+        if 'status' in response and response['status'] == 'success':
+            return(response)
+        else:
+            raise URLError(response['message'])
 
 def unschedule_flow(server_host, server_port, session_id, schedule_id):
     parameters = urlencode({
@@ -93,20 +102,26 @@ def unschedule_flow(server_host, server_port, session_id, schedule_id):
     parameters = parameters.encode('ascii')
     azkaban_url = f'http://{server_host}:{server_port}/schedule'
     with urlopen(azkaban_url, parameters) as fp:
-        return json.loads(fp.read())
+        response = json.loads(fp.read())
+        if 'status' in response and response['status'] == 'success':
+            return(response)
+        else:
+            raise URLError(response['message'])
 
 def upload_project(server_host, server_port, session_id, project_name, zip_file):
     azkaban_url = f'http://{server_host}:{server_port}/manager'
     files = {
-        'file': ('toto.zip', open(zip_file, 'rb'), 'application/zip')
+        'file': (basename(zip_file), open(zip_file, 'rb'), 'application/zip')
     }
     parameters = {
         'ajax':'upload',
         'session.id':session_id,
         'project':project_name
     }
-    r = requests.post(azkaban_url, files=files, data=parameters)
-    pprint(r.text)
+    requests.post(azkaban_url, files=files, data=parameters)
+    flows_id = get_flows_id(server_host, server_port, session_id, project_name)
+    if len(flows_id) == 0:
+        raise URLError(f"Project '{project_name}' push on Azkaban failed")
 
 #    file_data = open(zip_file, 'rb')
 #    parameters = urlencode({
