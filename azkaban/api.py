@@ -73,7 +73,8 @@ def get_flow_schedule_id(server_host, server_port, session_id, flow_id, project_
 
 def get_project_id(server_host, server_port, session_id, project_name):
     flows = fetch_project_flows(server_host, server_port, session_id, project_name)
-    return flows['projectId']
+    if 'projectId' in flows:
+        return flows['projectId']
 
 def schedule_cron_flow(server_host, server_port, session_id, project_name, flow_name, cron_expression):
     parameters = urlencode({
